@@ -1,7 +1,6 @@
 import torch
 import numpy as np
 from transformers import EsmForProtein, EsmTokenizer
-from torch.nn.functional import cosine_similarity
 
 model_name = "facebook/esm2_t33_650M_UR50D"
 tokenizer = EsmTokenizer.from_pretrained(model_name)
@@ -18,7 +17,7 @@ def get_embeddings(sequence):
 
     return embeddings[1:-1]  #remove CLS and EOS tokens
 
-def get_dynamic_substitution_matrix(seq_a, seq_b):
+def get_dynamic_cosine_similarity_matrix(seq_a, seq_b):
     emb_a = get_embeddings(seq_a)  #(m, d)
     emb_b = get_embeddings(seq_b)  #(n, d)
 
