@@ -10,7 +10,7 @@ import pickle
 from esm2matrix import get_dynamic_cosine_similarity_matrix
 from granthammatrix import normalized_grantham_matrix
 from local_alignment_affine_weighted import smith_waterman_affine_with_output
-from loss_functions import compute_alignment_accuracy
+from evaluation import compute_alignment_accuracy
 
 #for reproducibility
 random.seed(42)
