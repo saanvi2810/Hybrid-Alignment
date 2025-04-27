@@ -10,8 +10,6 @@ def compute_alignment_accuracy(ground_truth_df, prediction_df):
 
     Returns:
         true_positive_percentage (float): Percentage of correctly aligned residue pairs.
-        true_positives (int): Number of correct alignments.
-        total_ground_truth (int): Total number of ground truth alignments.
     """
     # Only match positions (Pos1, Pos2), ignore residues
     gt_pairs = set(zip(ground_truth_df['Pos1'], ground_truth_df['Pos2']))
