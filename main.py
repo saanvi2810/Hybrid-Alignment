@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from torch.optim import Adam
 import json
+import pickle
 
 from esm2matrix import get_dynamic_cosine_similarity_matrix
 from granthammatrix import normalized_grantham_matrix
 from local_alignment_affine_weighted import smith_waterman_affine_with_output
 from loss_functions import compute_alignment_accuracy
-from ground_truth_loader import get_ground_truth_alignment 
 
 #for reproducibility
 random.seed(42)
@@ -19,6 +19,9 @@ torch.manual_seed(42)
 
 with open('./sequences.json', 'r') as f:
     sequences = json.load(f)
+    
+with open('./pair_to_ground_truth.pkl', 'rb') as f:
+    pair_to_ground_truth = pickle.load(f)
 
 def load_ground_truth_pairs(file_path='./ground_truth_pairs.csv'):
     df = pd.read_csv(file_path)
@@ -83,7 +86,7 @@ for epoch in range(num_epochs):
             gap_extend=gap_extend
         )
 
-        gt_alignment = get_ground_truth_alignment(seq1_name, seq2_name) 
+        gt_alignment = pair_to_ground_truth(seq1_name, seq2_name) 
 
         if gt_alignment is None:
             continue
@@ -124,7 +127,7 @@ for epoch in range(num_epochs):
             gap_extend=gap_extend
         )
 
-        gt_alignment = get_ground_truth_alignment(seq1_name, seq2_name)
+        gt_alignment = pair_to_ground_truth(seq1_name, seq2_name)
 
         if gt_alignment is None:
             continue
