@@ -17,11 +17,14 @@ random.seed(42)
 np.random.seed(42)
 torch.manual_seed(42)
 
+print("Loading data...")
 with open('./sequences.json', 'r') as f:
     sequences = json.load(f)
     
 with open('./pair_to_ground_truth.pkl', 'rb') as f:
     pair_to_ground_truth = pickle.load(f)
+
+print("Data loaded.")
 
 def load_ground_truth_pairs(file_path='./ground_truth_pairs.csv'):
     df = pd.read_csv(file_path)

@@ -1,10 +1,10 @@
 import torch
 import numpy as np
-from transformers import EsmForProtein, EsmTokenizer
+from transformers import EsmModel, EsmTokenizer
 
 model_name = "facebook/esm2_t33_650M_UR50D"
 tokenizer = EsmTokenizer.from_pretrained(model_name)
-model = EsmForProtein.from_pretrained(model_name)
+model = EsmModel.from_pretrained(model_name)
 model.eval()
 
 def get_embeddings(sequence):
