@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import torch
 def smith_waterman_affine_with_output(seq1, seq2, 
                                       seq1_name, seq2_name,
                                       static_matrix, dynamic_matrix, 
@@ -74,4 +75,4 @@ def smith_waterman_affine_with_output(seq1, seq2,
 
     df_output = pd.DataFrame(aligned_pairs)
     
-    return df_output
+    return df_output, torch.tensor(score[1:, 1:], dtype=torch.float32)

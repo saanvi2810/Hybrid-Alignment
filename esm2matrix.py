@@ -1,25 +1,23 @@
 import torch
 import numpy as np
+import os
 from transformers import EsmModel, EsmTokenizer
 
-model_name = "facebook/esm2_t33_650M_UR50D"
-tokenizer = EsmTokenizer.from_pretrained(model_name)
-model = EsmModel.from_pretrained(model_name)
-model.eval()
+EMBEDDING_FOLDER = "./embeddings" 
 
-def get_embeddings(sequence):
-    sequence = ' '.join(list(sequence))
-    inputs = tokenizer(sequence, return_tensors="pt", add_special_tokens=True)
-
-    with torch.no_grad():
-        outputs = model(**inputs)
-        embeddings = outputs.last_hidden_state[0] 
-
-    return embeddings[1:-1]  #remove CLS and EOS tokens
+def load_embedding_from_disk(seq_name):
+    """
+    Loads the precomputed embedding tensor for a given sequence.
+    The embedding should be saved under: ./embeddings/{seq_name}.pt
+    """
+    path = os.path.join(EMBEDDING_FOLDER, f"{seq_name}.pt")
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Embedding file not found: {path}")
+    return torch.load(path) 
 
 def get_dynamic_cosine_similarity_matrix(seq_a, seq_b):
-    emb_a = get_embeddings(seq_a)  #(m, d)
-    emb_b = get_embeddings(seq_b)  #(n, d)
+    emb_a = load_embedding_from_disk(seq_a)  #(m, d)
+    emb_b = load_embedding_from_disk(seq_b)  #(n, d)
 
     #normalize embeddings
     emb_a_norm = emb_a / emb_a.norm(dim=1, keepdim=True)
