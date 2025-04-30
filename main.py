@@ -7,6 +7,10 @@ from torch.optim import Adam
 import json
 import pickle
 import torch.nn.functional as F
+from tqdm import tqdm
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+device = torch.device("cpu")
 
 from esm2matrix import get_dynamic_cosine_similarity_matrix
 from granthammatrix import normalized_grantham_matrix
@@ -109,7 +113,7 @@ for epoch in range(num_epochs):
     losses = []
     sampled_pairs = sample_hard_pairs(train_pairs, batch_size)
 
-    for seq1_name, seq2_name in sampled_pairs:
+    for seq1_name, seq2_name in tqdm(sampled_pairs, desc=f"Epoch {epoch+1} Training"):
         mapped_seq1 = name_map.get(seq1_name, None)
         mapped_seq2 = name_map.get(seq2_name, None)
 
@@ -164,7 +168,7 @@ for epoch in range(num_epochs):
     sampled_val_pairs = random.sample(val_pairs, batch_size)
     val_losses_epoch = []
 
-    for seq1_name, seq2_name in sampled_val_pairs:
+    for seq1_name, seq2_name in tqdm(sampled_val_pairs, desc=f"Epoch {epoch+1} Validation"):
         mapped_seq1 = name_map.get(seq1_name, None)
         mapped_seq2 = name_map.get(seq2_name, None)
 
