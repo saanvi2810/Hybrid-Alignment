@@ -4,6 +4,7 @@ import pickle
 import torch
 from tqdm import tqdm
 import os
+import csv
 
 from local_alignment_affine_weighted import smith_waterman_affine_with_output
 from evaluation import compute_alignment_accuracy
@@ -30,12 +31,25 @@ with open("name_map.txt") as f:
 blosum_df = pd.read_csv("BLOSUM_Substitution_Matrix.csv", index_col=0)
 all_pairs = list(pair_to_gt.keys())
 
-# Start fresh
+# Prepare partial results file
 partial_file = "blosum_all_partial.csv"
 results = []
+completed_pairs = set()
+
+# Resume logic
+if os.path.exists(partial_file):
+    with open(partial_file, newline='') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            results.append(row)  # preload existing results
+            completed_pairs.add((row["Seq1"], row["Seq2"]))
+    print(f"Resuming from partial file — {len(completed_pairs)} pairs already done.")
 
 # Main loop
 for i, (s1, s2) in enumerate(tqdm(all_pairs, desc="Evaluating all pairs")):
+    if (s1, s2) in completed_pairs:
+        continue
+
     m1, m2 = name_map.get(s1), name_map.get(s2)
     if not m1 or not m2:
         continue
@@ -72,7 +86,7 @@ for i, (s1, s2) in enumerate(tqdm(all_pairs, desc="Evaluating all pairs")):
 
     results.append({"Seq1": s1, "Seq2": s2, "Accuracy": acc})
 
-    if (i + 1) % 250 == 0:
+    if (len(results) % 250) == 0:
         pd.DataFrame(results).to_csv(partial_file, index=False)
         print(f"Saved {len(results)} results to {partial_file}")
 
