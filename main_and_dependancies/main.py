@@ -9,10 +9,9 @@ import pickle
 import torch.nn.functional as F
 from tqdm import tqdm
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
-device = torch.device("cpu")
 
-from esm2matrix import get_dynamic_cosine_similarity_matrix
+
+from main_and_dependancies.esm2matrix import get_dynamic_cosine_similarity_matrix
 from granthammatrix import normalized_grantham_matrix
 from local_alignment_affine_weighted import smith_waterman_affine_with_output
 from evaluation import compute_alignment_accuracy
@@ -105,6 +104,9 @@ batch_size = 8
 
 train_losses = []
 val_losses = []
+w_static_vals = []
+gap_open_vals = []
+gap_extend_vals = []
 best_val_loss = float('inf')
 best_params = None
 
@@ -215,6 +217,10 @@ for epoch in range(num_epochs):
             'gap_open': gap_open.item(),
             'gap_extend': gap_extend.item()
         }
+        
+    w_static_vals.append(w_static.item())
+    gap_open_vals.append(gap_open.item())
+    gap_extend_vals.append(gap_extend.item())
 
     if epoch % 10 == 0 or epoch == num_epochs - 1:
         print(f"Epoch {epoch:04d} | Train loss: {batch_loss.item():.4f} | Val loss: {val_loss:.4f} | w_static: {w_static.item():.3f} | gap_open: {gap_open.item():.2f} | gap_extend: {gap_extend.item():.2f}")
@@ -225,11 +231,27 @@ with open('best_alignment_params.json', 'w') as f:
 print(f"\nBest Params Found: {best_params}")
 
 #plot
-plt.plot(train_losses, label='Train Loss')
-plt.plot(val_losses, label='Validation Loss')
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
+
+epochs = list(range(1, num_epochs + 1))
+train_loss = train_losses
+val_loss = val_losses
+
+plt.subplot(1, 2, 1)
+plt.plot(epochs, train_loss, label="Train Loss (KL Divergence)")
+plt.plot(epochs, val_loss, label="Validation Loss")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("KL Divergence Loss")
 plt.legend()
-plt.title('Training vs Validation Loss')
-plt.savefig('loss_curve.png')
+
+plt.subplot(1, 2, 2)
+plt.plot(epochs, w_static_vals, label="w_static (Grantham Weight)")
+plt.plot(epochs, gap_open_vals, label="Gap Opening Penalty")
+plt.plot(epochs, gap_extend_vals, label="Gap Extension Penalty")
+plt.xlabel("Epoch")
+plt.ylabel("Parameter Value")
+plt.title("Learned Parameters Over Time")
+plt.legend()
+
+plt.tight_layout()
 plt.show()

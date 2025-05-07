@@ -1,14 +1,12 @@
 import pandas as pd
 import torch
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
-device = torch.device("cpu")
 
 def smith_waterman_affine_with_output(seq1, seq2, 
                                       seq1_name, seq2_name,
                                       static_matrix, dynamic_matrix, 
                                       w_static=0.5, w_dynamic=0.5, 
-                                      gap_open=-10.0, gap_extend=-1.0):
+                                      gap_open=-10.0, gap_extend=-1.0, device='cpu'):
     
     m, n = len(seq1), len(seq2)
 
