@@ -225,7 +225,7 @@ for epoch in range(num_epochs):
     if epoch % 10 == 0 or epoch == num_epochs - 1:
         print(f"Epoch {epoch:04d} | Train loss: {batch_loss.item():.4f} | Val loss: {val_loss:.4f} | w_static: {w_static.item():.3f} | gap_open: {gap_open.item():.2f} | gap_extend: {gap_extend.item():.2f}")
 
-with open('best_alignment_params.json', 'w') as f:
+with open('./results/best_alignment_params.json', 'w') as f:
     json.dump(best_params, f, indent=2)
 
 print(f"\nBest Params Found: {best_params}")
@@ -254,4 +254,5 @@ plt.title("Learned Parameters Over Time")
 plt.legend()
 
 plt.tight_layout()
-plt.show()
+plt.savefig('./results/training_summary.png')
+
