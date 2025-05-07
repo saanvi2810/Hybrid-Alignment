@@ -104,16 +104,4 @@ Use the Jupyter notebooks in `eval_files/` to:
 - MacOS or Linux recommended
 - CPU is sufficient, but GPU (CUDA) will significantly accelerate ESM2-based training
 
----
 
-## Training Summary
-
-Our training approach uses KL divergence to align predicted soft alignment matrices with structural ground truth. Only a few parameters (similarity weighting and gap penalties) are learned.
-
-Future extensions may include fine-tuning ESM2 layers and incorporating bilinear similarity scoring for more adaptive alignment.
-
----
-
-## Citation
-
-This project was completed as part of a final computational genomics research effort. Refer to `comp gen final paper.pdf` for a detailed explanation of our methods and results.
