@@ -75,7 +75,7 @@ Manually download the following from Google Drive and place them in the correct 
 - `*.pt` ESM2 embeddings (into `embeddings/`)
 - `clean_ground_truth.csv`
 
-### 3. Train and Evaluate
+### 3. Train
 
 Run the main script to begin training and evaluation:
 
